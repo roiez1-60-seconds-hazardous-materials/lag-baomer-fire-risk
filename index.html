@@ -1223,30 +1223,28 @@ function renderMetrics() {
         <div class="mname">כיוון רוח · התפשטות אש</div>
       </div>
       <svg class="compass-vis" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="42" fill="none" stroke="#D9D2BD" stroke-width="1"/>
-        <circle cx="50" cy="50" r="34" fill="none" stroke="#D9D2BD" stroke-width="0.5" stroke-dasharray="2 3"/>
-        <text x="50" y="13" text-anchor="middle" font-size="9" fill="#8C8F98" font-family="Assistant" font-weight="700">צ</text>
-        <text x="50" y="93" text-anchor="middle" font-size="9" fill="#8C8F98" font-family="Assistant" font-weight="700">ד</text>
-        <text x="11" y="53" text-anchor="middle" font-size="9" fill="#8C8F98" font-family="Assistant" font-weight="700">מ</text>
-        <text x="89" y="53" text-anchor="middle" font-size="9" fill="#8C8F98" font-family="Assistant" font-weight="700">מז</text>
-        <!-- Wind FROM direction (gray dashed inward) -->
+        <circle cx="50" cy="50" r="38" fill="none" stroke="#D9D2BD" stroke-width="1"/>
+        <circle cx="50" cy="50" r="30" fill="none" stroke="#D9D2BD" stroke-width="0.5" stroke-dasharray="2 3"/>
+        <text x="50" y="9"  text-anchor="middle" font-size="8" fill="#8C8F98" font-family="Assistant" font-weight="700">צ</text>
+        <text x="50" y="98" text-anchor="middle" font-size="8" fill="#8C8F98" font-family="Assistant" font-weight="700">ד</text>
+        <text x="4"  y="53" text-anchor="middle" font-size="8" fill="#8C8F98" font-family="Assistant" font-weight="700">מ</text>
+        <text x="95" y="53" text-anchor="middle" font-size="8" fill="#8C8F98" font-family="Assistant" font-weight="700">מז</text>
+        <!-- Wind FROM direction (gray dashed, short, outer ring) -->
         ${(() => {
           const a = (ds.deg - 90) * Math.PI/180;
-          const x1 = 50 + Math.cos(a) * 38, y1 = 50 + Math.sin(a) * 38;
-          const x2 = 50 + Math.cos(a) * 12, y2 = 50 + Math.sin(a) * 12;
-          return `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#8C8F98" stroke-width="1" stroke-dasharray="3 2"/>`;
+          const x1 = 50 + Math.cos(a) * 28, y1 = 50 + Math.sin(a) * 28;
+          const x2 = 50 + Math.cos(a) * 14, y2 = 50 + Math.sin(a) * 14;
+          return `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#8C8F98" stroke-width="1" stroke-dasharray="2 2"/>`;
         })()}
-        <!-- Fire spread direction (ember orange, with arrowhead, outward) -->
+        <!-- Fire spread direction (ember orange, with arrowhead) -->
         ${(() => {
-          const a = (ds.deg + 90) * Math.PI/180; // opposite direction
-          const x1 = 50, y1 = 50;
-          const x2 = 50 + Math.cos(a) * 38, y2 = 50 + Math.sin(a) * 38;
-          // arrow head
-          const ah1x = x2 - Math.cos(a) * 6 + Math.cos(a + Math.PI/2) * 4;
-          const ah1y = y2 - Math.sin(a) * 6 + Math.sin(a + Math.PI/2) * 4;
-          const ah2x = x2 - Math.cos(a) * 6 - Math.cos(a + Math.PI/2) * 4;
-          const ah2y = y2 - Math.sin(a) * 6 - Math.sin(a + Math.PI/2) * 4;
-          return `<line x1="${x1}" y1="${y1}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#C4502A" stroke-width="2.5" stroke-linecap="round"/>
+          const a = (ds.deg + 90) * Math.PI/180;
+          const x2 = 50 + Math.cos(a) * 26, y2 = 50 + Math.sin(a) * 26;
+          const ah1x = x2 - Math.cos(a) * 5 + Math.cos(a + Math.PI/2) * 3;
+          const ah1y = y2 - Math.sin(a) * 5 + Math.sin(a + Math.PI/2) * 3;
+          const ah2x = x2 - Math.cos(a) * 5 - Math.cos(a + Math.PI/2) * 3;
+          const ah2y = y2 - Math.sin(a) * 5 - Math.sin(a + Math.PI/2) * 3;
+          return `<line x1="50" y1="50" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#C4502A" stroke-width="2.5" stroke-linecap="round"/>
                   <polygon points="${x2.toFixed(2)},${y2.toFixed(2)} ${ah1x.toFixed(2)},${ah1y.toFixed(2)} ${ah2x.toFixed(2)},${ah2y.toFixed(2)}" fill="#C4502A"/>`;
         })()}
         <circle cx="50" cy="50" r="2" fill="#1F2128"/>
