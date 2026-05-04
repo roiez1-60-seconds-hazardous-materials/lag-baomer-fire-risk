@@ -428,6 +428,14 @@
     letter-spacing: 0.02em;
     margin-top: 4px;
   }
+  .gauge-disclaimer {
+    margin-top: 10px;
+    font-size: 0.7rem;
+    color: var(--ink-muted);
+    line-height: 1.35;
+    max-width: 240px;
+    font-style: italic;
+  }
   .tier-low    { color: var(--risk-low); }
   .tier-mid    { color: var(--risk-mid); }
   .tier-high   { color: var(--risk-high); }
@@ -682,6 +690,7 @@
           <div class="gauge-score mono" id="gaugeScore">--</div>
           <div class="gauge-tier" id="gaugeTier">—</div>
         </div>
+        <div class="gauge-disclaimer">אומדן יחסי לכלי זה — אינו מדד מטאורולוגי תקני</div>
       </div>
     </div>
   </section>
@@ -867,24 +876,50 @@ let state = {
 };
 
 /* ===========================================================
-   RISK ENGINE
+   RISK ENGINE — מכוייל לסולמות מקובלים
+   ספי רוח: Beaufort + התנהגות אש
+   ספי לחות: NFDRS-aligned (RH<25 קריטי, >75 רווי)
+   גשם: מכפיל מיתון (לא חיסור) — רטיבות דלק חוסמת התלקחות
+   משקלים: לחות 40% (גורם דומיננטי) · רוח 30% · משבים 30%
    =========================================================== */
+function windComp(v) {
+  if (v <= 2)  return v * 4;                 // 0..8   — מינימלי
+  if (v <= 5)  return 8 + (v-2)*6;           // 8..26  — בריזה
+  if (v <= 8)  return 26 + (v-5)*8;          // 26..50 — מתונה–חזקה
+  if (v <= 12) return 50 + (v-8)*6;          // 50..74 — חזקה
+  return Math.min(100, 74 + (v-12)*5);       // 74..100 — קיצוני
+}
+function gustComp(g) {
+  if (g <= 8)  return g * 1.5;               // 0..12  — רגיל
+  if (g <= 12) return 12 + (g-8)*3;          // 12..24 — מורגש
+  if (g <= 16) return 24 + (g-12)*4;         // 24..40 — חזק
+  if (g <= 20) return 40 + (g-16)*5;         // 40..60 — עז
+  return Math.min(100, 60 + (g-20)*4);
+}
+function humComp(h) {
+  if (h >= 80) return 0;                     // רווי — דלק לח
+  if (h >= 70) return (80-h);                // 0..10
+  if (h >= 55) return 10 + (70-h) * 2;       // 10..40
+  if (h >= 40) return 40 + (55-h) * 2;       // 40..70  — יבש
+  if (h >= 25) return 70 + (40-h) * 1.5;     // 70..92.5 — קריטי
+  return Math.min(100, 92.5 + (25-h) * 0.3);
+}
+function rainMult(r) {
+  if (r >= 70) return 0.3;                   // מיתון חזק
+  if (r >= 50) return 0.5;
+  if (r >= 30) return 0.7;
+  if (r >= 10) return 0.9;
+  return 1.0;                                // ללא מיתון
+}
 function computeRisk(avg, gust, humidity, rain) {
-  // Weighted: each component contributes to "raw fire-spread potential",
-  // then rain probability mitigates.
-  const windScore     = Math.min(avg * 4,         32); // 0..32
-  const gustScore     = Math.min(gust * 2.5,      37.5); // 0..37.5
-  const humidityScore = Math.max(0, (100-humidity) * 0.5); // dryer = higher
-  const raw = windScore + gustScore + humidityScore;
-  const mitigation = rain * 0.4; // rain reduces
-  const score = Math.max(0, Math.min(100, (raw - mitigation) / 120 * 100 * 1.4));
-  return Math.round(score);
+  const base = 0.30 * windComp(avg) + 0.30 * gustComp(gust) + 0.40 * humComp(humidity);
+  return Math.round(base * rainMult(rain));
 }
 
 function tier(score) {
-  if (score < 30) return 'low';
-  if (score < 50) return 'mid';
-  if (score < 70) return 'high';
+  if (score < 15) return 'low';
+  if (score < 30) return 'mid';
+  if (score < 50) return 'high';
   return 'extreme';
 }
 function tierLabel(t) {
@@ -916,32 +951,37 @@ function tierBg(t) {
 }
 
 /* ===========================================================
-   METRIC INTERPRETATION
+   METRIC INTERPRETATION — מכוייל
    =========================================================== */
 function windMeaning(avg) {
-  if (avg < 2)  return ['low',  'כמעט אין השפעה על התפשטות האש'];
-  if (avg < 4)  return ['mid',  'התפשטות מתונה — שליטה אפשרית'];
-  if (avg < 6)  return ['high', 'התפשטות מהירה, גיצים מועפים'];
-  if (avg < 8)  return ['high', 'התפשטות מהירה מאוד, סיכון להתלקחויות שניוניות'];
-  return            ['extr', 'התפשטות קיצונית — סכנה ממשית להתפרצויות חדשות'];
+  if (avg < 3)  return ['low',  'השפעה מינימלית על התפשטות אש'];
+  if (avg < 6)  return ['low',  'בריזה — התפשטות איטית, ניתנת לשליטה'];
+  if (avg < 9)  return ['mid',  'רוח מתונה–חזקה — התפשטות מואצת'];
+  if (avg < 12) return ['high', 'רוח חזקה — התפשטות מהירה, גיצים מועפים'];
+  return            ['extr', 'רוח קיצונית — התפשטות מהירה מאוד'];
 }
-function gustMeaning(g) {
-  if (g < 8)   return ['low',  'משבים רגילים, השפעה מינימלית'];
-  if (g < 12)  return ['mid',  'משבים מורגשים — גיצים נישאים עד עשרות מטרים'];
-  if (g < 15)  return ['high', 'משבים חזקים — גיצים נישאים מאות מטרים, סיכון להתלקחויות שניוניות'];
-  return            ['extr', 'משבים קיצוניים — סכנה לפיזור גיצים נרחב'];
+function gustMeaning(g, hum) {
+  // פיזור גיצים תלוי גם בלחות; משבים בלחות גבוהה הרבה פחות מסוכנים
+  const dry = hum < 50;
+  if (g < 8)   return ['low',  'משבים סטנדרטיים'];
+  if (g < 12)  return [dry?'mid':'low', dry ? 'משבים מורגשים, גיצים נישאים עד עשרות מטרים' : 'משבים מורגשים — לחות גבוהה ממתנת פיזור גיצים'];
+  if (g < 16)  return [dry?'high':'mid', dry ? 'משבים חזקים — גיצים נישאים מאות מטרים בתנאים יבשים' : 'משבים חזקים — בלחות הזו פיזור גיצים מוגבל'];
+  if (g < 20)  return [dry?'extr':'high', dry ? 'משבים עזים — סיכון לפיזור גיצים נרחב' : 'משבים עזים — לחות חוסמת חלק מסיכון פיזור הגיצים'];
+  return            ['extr', 'משבים קיצוניים'];
 }
 function humidityMeaning(h) {
-  if (h < 30)  return ['extr', 'דלק יבש מאוד — בעירה מהירה ועוצמתית'];
-  if (h < 50)  return ['high', 'תנאים מעודדי בערה'];
-  if (h < 70)  return ['mid',  'לחות בינונית — מיתון חלקי'];
-  return            ['low',  'דלק לח — התפשטות איטית'];
+  if (h < 25)  return ['extr', 'דלק יבש קריטית — בעירה מהירה ועוצמתית'];
+  if (h < 40)  return ['high', 'דלק יבש — תנאים מעודדי בערה'];
+  if (h < 55)  return ['mid',  'לחות בינונית'];
+  if (h < 75)  return ['low',  'דלק לח — התפשטות מואטת'];
+  return            ['low',  'דלק רווי לחות — התלקחות מתקשה'];
 }
 function rainMeaning(r) {
-  if (r < 20)  return ['extr', 'ללא השפעה ממתנת'];
-  if (r < 50)  return ['mid',  'מיתון חלקי — להיערך לתרחיש יבש'];
-  if (r < 80)  return ['low',  'מיתון משמעותי — אך לא תחליף לכוננות'];
-  return            ['low',  'סיכוי גבוה לכיבוי טבעי חלקי — אין להסתמך'];
+  if (r < 10)  return ['high', 'ללא מיתון אטמוספרי'];
+  if (r < 30)  return ['mid',  'מיתון מינורי'];
+  if (r < 50)  return ['low',  'מיתון חלקי'];
+  if (r < 70)  return ['low',  'מיתון משמעותי'];
+  return            ['low',  'מיתון חזק — דלק צפוי להישאר רטוב'];
 }
 function dirSpread(dir) {
   // Wind FROM direction → fire spreads OPPOSITE
@@ -960,28 +1000,34 @@ function buildVerdict(reg, row, score, t) {
   const ds = dirSpread(dir);
   const parts = [];
 
-  // Headline by tier
+  // Headline by tier — calibrated tone
   const heads = {
-    low:    `<strong>תנאי התפשטות מתונים.</strong>`,
-    mid:    `<strong>תנאים מאתגרים — מומלצת ערנות.</strong>`,
-    high:   `<strong>סיכון גבוה — היערכות מוגברת נדרשת.</strong>`,
-    extreme:`<strong>סיכון קיצוני — שיקול הצבת כוחות מקדימים.</strong>`
+    low:    `<strong>תנאי התפשטות נמוכים.</strong>`,
+    mid:    `<strong>תנאים מתונים — ערנות סטנדרטית.</strong>`,
+    high:   `<strong>תנאים מאתגרים — היערכות מוגברת.</strong>`,
+    extreme:`<strong>תנאים קיצוניים — שיקול הצבת כוחות מקדימים.</strong>`
   };
   parts.push(heads[t]);
 
   // Spread direction
   parts.push(`רוח ${dir} — האש תתפשט מ${ds.from} ל${ds.to}.`);
 
-  // Gust risk
-  if (gust >= 15) parts.push('משבים ≥15 מ׳/ש׳ — התראת התלקחויות שניוניות עד מאות מטרים מהמדורה.');
-  else if (gust >= 12) parts.push('משבים חזקים — להגדיל מרחקי בידוד מסביב למוקדי בעירה.');
+  // Gust risk — context-aware (depends on humidity)
+  if (gust >= 12) {
+    if (hum < 50) {
+      parts.push('משבים חזקים בתנאים יבשים — לשקול הרחבת מרחקי בידוד מסביב למוקדי בעירה.');
+    } else {
+      parts.push(`משבים חזקים, אך לחות ${hum}% ממתנת את סיכון פיזור הגיצים.`);
+    }
+  }
 
   // Rain mitigation
-  if (rain >= 70) parts.push('סיכוי גשם גבוה צפוי לסייע במיתון התפשטות.');
-  else if (rain < 20) parts.push('ללא מיתון אטמוספרי — דלק יבש לאורך הלילה.');
+  if (rain >= 70) parts.push('סיכוי גשם גבוה — צפוי לסייע משמעותית במיתון התפשטות.');
+  else if (rain >= 30) parts.push('סיכוי גשם בינוני — מיתון חלקי בלבד.');
+  else if (rain < 10) parts.push('ללא מיתון אטמוספרי.');
 
-  // Region-specific note
-  if (reg.notes[hour]) parts.push(`<em>הערה אזורית:</em> ${reg.notes[hour]}.`);
+  // Region-specific note from source document
+  if (reg.notes[hour]) parts.push(`<em>הערה מהתחזית:</em> ${reg.notes[hour]}.`);
 
   return parts.join(' ');
 }
@@ -1129,7 +1175,7 @@ function renderMetrics() {
   const [, dir, avg, gust, hum, rain] = row;
   const ds = dirSpread(dir);
   const wm = windMeaning(avg);
-  const gm = gustMeaning(gust);
+  const gm = gustMeaning(gust, hum);
   const hm = humidityMeaning(hum);
   const rm = rainMeaning(rain);
 
