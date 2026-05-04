@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FAF5E8">
+<title>תחזית סיכון אש — ל"ג בעומר | כבאות והצלה לישראל</title>
+<meta name="description" content="כלי מבצעי להערכת תנאי התפשטות אש בליל ל״ג בעומר — מהירות רוח, משבים, לחות, גשם וכיוון, עם משמעות מבצעית לכל מחוז ושעה.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Assistant:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== DESIGN SYSTEM: "ערב בגליל" — Spring Dusk ===== */
+  :root {
+    /* Backgrounds — parchment/dusk */
+    --cream: #FAF5E8;
+    --parchment: #F2EBD8;
+    --parchment-deep: #E8DFC3;
+    --paper-card: #FFFDF5;
+
+    /* Ink */
+    --ink: #1F2128;
+    --ink-soft: #4B4F5A;
+    --ink-muted: #8C8F98;
+    --ink-line: #D9D2BD;
+
+    /* Spring foliage */
+    --sage-mist: #DCE4CC;
+    --sage-light: #B8C5A4;
+    --sage: #7A8B5C;
+    --sage-deep: #4F6240;
+
+    /* Bonfire embers */
+    --ember-pale: #FBE8C5;
+    --ember-glow: #F4C36F;
+    --ember: #E68A3F;
+    --ember-deep: #C4502A;
+    --ember-coal: #7A2918;
+
+    /* Risk scale */
+    --risk-low: #5C9B6A;
+    --risk-low-bg: #DEEBDD;
+    --risk-mid: #E6A53A;
+    --risk-mid-bg: #F8EBC8;
+    --risk-high: #D8632C;
+    --risk-high-bg: #F8D9C2;
+    --risk-extreme: #A82A22;
+    --risk-extreme-bg: #F1C8C2;
+
+    /* Sky / atmosphere */
+    --sky-pale: #DCE5E8;
+    --sky: #94B3C2;
+    --sky-deep: #4D6F7E;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(31, 33, 40, 0.06);
+    --shadow: 0 4px 16px rgba(31, 33, 40, 0.08);
+    --shadow-lg: 0 12px 40px rgba(31, 33, 40, 0.12);
+    --shadow-card: 0 1px 0 rgba(31, 33, 40, 0.04), 0 8px 24px rgba(122, 41, 24, 0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Assistant', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Atmospheric paper-grain texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      radial-gradient(ellipse at top right, rgba(244, 195, 111, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom left, rgba(122, 139, 92, 0.07) 0%, transparent 55%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/></filter><rect width='120' height='120' filter='url(%23n)'/></svg>");
+  }
+
+  .display { font-family: 'Frank Ruhl Libre', 'Assistant', serif; font-weight: 700; letter-spacing: -0.01em; }
+  .mono { font-family: 'JetBrains Mono', 'SF Mono', monospace; font-variant-numeric: tabular-nums; }
+
+  /* ===== LAYOUT ===== */
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: clamp(16px, 3vw, 32px);
+  }
+
+  /* ===== HEADER ===== */
+  .masthead {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(16px, 3vw, 32px);
+    align-items: center;
+    padding: clamp(20px, 3vw, 32px);
+    margin-bottom: clamp(16px, 3vw, 28px);
+    background: linear-gradient(135deg, var(--paper-card) 0%, var(--parchment) 100%);
+    border: 1px solid var(--ink-line);
+    border-radius: 18px;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead::after {
+    content: '';
+    position: absolute;
+    top: -40px; left: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, var(--ember-glow) 0%, transparent 60%);
+    opacity: 0.18;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .crest {
+    width: clamp(56px, 7vw, 72px);
+    height: clamp(56px, 7vw, 72px);
+    border-radius: 12px;
+    background: linear-gradient(180deg, var(--ember-deep), var(--ember-coal));
+    display: grid; place-items: center;
+    box-shadow: 0 4px 12px rgba(122, 41, 24, 0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+    position: relative;
+    z-index: 1;
+  }
+  .crest svg { width: 60%; height: 60%; }
+
+  .masthead-text { position: relative; z-index: 1; }
+  .masthead-eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    color: var(--ember-deep);
+    font-weight: 700;
+    text-transform: none;
+    margin-bottom: 4px;
+  }
+  .masthead-title {
+    font-size: clamp(1.4rem, 3.2vw, 2rem);
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .masthead-sub {
+    font-size: clamp(0.85rem, 1.8vw, 1rem);
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+  .masthead-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--ink-line);
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+  }
+  .masthead-meta strong { color: var(--ink-soft); font-weight: 600; }
+  .masthead-meta a { color: var(--ember-deep); text-decoration: none; border-bottom: 1px dotted currentColor; }
+
+  /* ===== SECTION HEADER ===== */
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin: 24px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ink-line);
+  }
+  .sec-head h2 {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .sec-head .ord {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ember-deep);
+    font-weight: 700;
+  }
+
+  /* ===== CONTROL PANEL ===== */
+  .controls {
+    background: var(--paper-card);
+    border: 1px solid var(--ink-line);
+    border-radius: 16px;
+    padding: clamp(16px, 2.5vw, 24px);
+    box-shadow: var(--shadow-card);
+  }
+
+  .control-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .control-label svg { width: 14px; height: 14px; }
+
+  /* Region pills */
+  .region-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .region-pill {
+    cursor: pointer;
+    background: var(--parchment);
+    border: 1.5px solid var(--ink-line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: right;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .region-pill:hover {
+    background: var(--ember-pale);
+    border-color: var(--ember-glow);
+    transform: translateY(-1px);
+  }
+  .region-pill.active {
+    background: linear-gradient(180deg, var(--ink) 0%, #2A2D36 100%);
+    color: var(--cream);
+    border-color: var(--ink);
+    box-shadow: 0 4px 12px rgba(31, 33, 40, 0.18);
+  }
+  .region-pill .icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--paper-card);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+    border: 1px solid var(--ink-line);
+  }
+  .region-pill.active .icon {
+    background: rgba(244, 195, 111, 0.15);
+    border-color: rgba(244, 195, 111, 0.3);
+  }
+  .region-pill .icon svg { width: 16px; height: 16px; stroke: var(--ember-deep); }
+  .region-pill.active .icon svg { stroke: var(--ember-glow); }
+  .region-pill .pill-text { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+  .region-pill .pill-sub { font-size: 0.7rem; font-weight: 400; opacity: 0.75; }
+
+  /* Hour timeline */
+  .hour-track {
+    position: relative;
+    background: var(--parchment);
+    border: 1.5px solid var(--ink-line);
+    border-radius: 14px;
+    padding: 16px 12px 14px;
+  }
+  .hour-pills {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 4px;
+  }
+  .hour-pill {
+    cursor: pointer;
+    background: transparent;
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 8px 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    transition: all 0.18s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .hour-pill:hover { background: var(--paper-card); }
+  .hour-pill.active {
+    background: var(--ink);
+    color: var(--ember-glow);
+    border-color: var(--ink);
+  }
+  .hour-pill .risk-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--risk-mid);
+  }
+  .hour-pill.endpoint {
+    color: var(--ember-deep);
+  }
+  .hour-pill.endpoint::before {
+    content: attr(data-tag);
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--ember-deep);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    font-family: 'Assistant', sans-serif;
+  }
+  .hour-track { padding-bottom: 32px; }
+
+  /* ===== HERO CARD ===== */
+  .hero {
+    margin-top: 24px;
+    background: var(--paper-card);
+    border: 1px solid var(--ink-line);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    position: relative;
+  }
+  .hero-band {
+    height: 5px;
+    background: linear-gradient(90deg, var(--risk-low), var(--risk-mid), var(--risk-high), var(--risk-extreme));
+  }
+
+  .hero-inner {
+    padding: clamp(20px, 3vw, 32px);
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: clamp(20px, 3vw, 36px);
+    align-items: start;
+  }
+  @media (max-width: 820px) {
+    .hero-inner { grid-template-columns: 1fr; }
+  }
+
+  .hero-headline {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .hero-eyebrow {
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.16em;
+    font-weight: 600;
+  }
+  .hero-region {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--ink);
+  }
+  .hero-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(2.6rem, 7vw, 4rem);
+    font-weight: 700;
+    color: var(--ember-deep);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-top: 4px;
+  }
+  .hero-time .ampm {
+    font-size: 0.4em;
+    color: var(--ink-muted);
+    margin-right: 8px;
+    font-weight: 400;
+  }
+
+  .verdict {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--parchment);
+    border-right: 4px solid var(--ink);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .verdict strong { color: var(--ink); font-weight: 700; }
+  .verdict.tier-low    { background: var(--risk-low-bg);     border-color: var(--risk-low); }
+  .verdict.tier-mid    { background: var(--risk-mid-bg);     border-color: var(--risk-mid); }
+  .verdict.tier-high   { background: var(--risk-high-bg);    border-color: var(--risk-high); }
+  .verdict.tier-extreme{ background: var(--risk-extreme-bg); border-color: var(--risk-extreme); }
+
+  /* ===== GAUGE ===== */
+  .gauge-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .gauge {
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 2 / 1.15;
+  }
+  .gauge-label {
+    margin-top: -28px;
+    z-index: 2;
+    position: relative;
+  }
+  .gauge-score {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 2.6rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .gauge-tier {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-top: 4px;
+  }
+  .tier-low    { color: var(--risk-low); }
+  .tier-mid    { color: var(--risk-mid); }
+  .tier-high   { color: var(--risk-high); }
+  .tier-extreme{ color: var(--risk-extreme); }
+
+  /* ===== METRIC CARDS ===== */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .metric {
+    background: var(--paper-card);
+    border: 1px solid var(--ink-line);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .metric:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .metric-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .metric-head .micon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: grid; place-items: center;
+    background: var(--parchment);
+    flex-shrink: 0;
+  }
+  .metric-head .micon svg { width: 18px; height: 18px; }
+  .metric-head .mname {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+  }
+  .metric-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .metric-value .unit { font-size: 0.5em; color: var(--ink-muted); margin-right: 4px; font-weight: 400; }
+  .metric-meaning {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .metric-meaning .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: 2px;
+  }
+  .tag-low  { background: var(--risk-low-bg);  color: var(--risk-low); }
+  .tag-mid  { background: var(--risk-mid-bg);  color: var(--risk-mid); }
+  .tag-high { background: var(--risk-high-bg); color: var(--risk-high); }
+  .tag-extr { background: var(--risk-extreme-bg); color: var(--risk-extreme); }
+
+  /* Compass card special layout */
+  .metric.compass-card .compass-vis {
+    width: 100px; height: 100px;
+    margin: 0 auto 8px;
+  }
+
+  /* Bars */
+  .bar {
+    height: 6px;
+    background: var(--parchment-deep);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+
+  /* ===== TREND CHART ===== */
+  .trend-card {
+    background: var(--paper-card);
+    border: 1px solid var(--ink-line);
+    border-radius: 16px;
+    padding: clamp(16px, 2.5vw, 24px);
+    margin-top: 24px;
+    box-shadow: var(--shadow-card);
+  }
+  .trend-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .trend-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.15rem; font-weight: 700; }
+  .trend-legend { display: flex; gap: 16px; font-size: 0.78rem; color: var(--ink-soft); }
+  .trend-legend span { display: flex; align-items: center; gap: 6px; }
+  .trend-legend .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .chart { width: 100%; aspect-ratio: 5/2; min-height: 240px; }
+
+  /* ===== HEATMAP ===== */
+  .heatmap-card {
+    background: var(--paper-card);
+    border: 1px solid var(--ink-line);
+    border-radius: 16px;
+    padding: clamp(16px, 2.5vw, 24px);
+    margin-top: 24px;
+    box-shadow: var(--shadow-card);
+    overflow-x: auto;
+  }
+  .heat-grid {
+    display: grid;
+    grid-template-columns: 130px repeat(9, 1fr);
+    gap: 4px;
+    min-width: 720px;
+  }
+  .heat-grid .cell { padding: 8px 4px; border-radius: 6px; text-align: center; }
+  .heat-grid .row-label {
+    text-align: right; padding: 8px 12px;
+    font-weight: 700; font-size: 0.85rem;
+    color: var(--ink-soft);
+    background: transparent !important;
+    cursor: pointer;
+  }
+  .heat-grid .row-label:hover { color: var(--ember-deep); }
+  .heat-grid .row-label.active { color: var(--ember-deep); }
+  .heat-grid .col-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-muted);
+    background: transparent !important;
+    padding: 6px 2px !important;
+  }
+  .heat-cell {
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(31,33,40,0.85);
+    border: 1.5px solid transparent;
+    transition: transform 0.15s ease;
+  }
+  .heat-cell:hover { transform: scale(1.08); }
+  .heat-cell.active { border-color: var(--ink); transform: scale(1.05); box-shadow: 0 4px 12px rgba(31,33,40,0.15); }
+
+  /* ===== FOOTER ===== */
+  .colophon {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--ink-line);
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    text-align: center;
+  }
+  .colophon strong { color: var(--ink-soft); }
+  .colophon .ornament {
+    margin-bottom: 8px;
+    font-family: 'Frank Ruhl Libre', serif;
+    color: var(--ember-deep);
+    font-size: 1.2rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* Animation */
+  @keyframes fadeRise {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .anim { animation: fadeRise 0.4s ease both; }
+  .anim-1 { animation-delay: 0.05s; }
+  .anim-2 { animation-delay: 0.10s; }
+  .anim-3 { animation-delay: 0.15s; }
+  .anim-4 { animation-delay: 0.20s; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  .pulse-dot { animation: pulse 1.6s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== MASTHEAD ===== -->
+  <header class="masthead anim">
+    <div class="crest" aria-label="כבאות והצלה לישראל">
+      <!-- Flame within shield -->
+      <svg viewBox="0 0 48 48" fill="none">
+        <path d="M24 6 C 30 14, 36 18, 36 28 C 36 36, 30 42, 24 42 C 18 42, 12 36, 12 28 C 12 18, 18 14, 24 6 Z"
+              fill="#F4C36F" stroke="#FAF5E8" stroke-width="1.5"/>
+        <path d="M24 16 C 27 22, 30 24, 30 30 C 30 34, 27 37, 24 37 C 21 37, 18 34, 18 30 C 18 24, 21 22, 24 16 Z"
+              fill="#C4502A"/>
+      </svg>
+    </div>
+    <div class="masthead-text">
+      <div class="masthead-eyebrow">כבאות והצלה לישראל · אגף המבצעים</div>
+      <h1 class="masthead-title display">תחזית סיכון התפשטות אש</h1>
+      <div class="masthead-sub">היערכות לליל ל״ג בעומר — תחזית מטאורולוגית אופרטיבית לפי מחוז ושעה</div>
+      <div class="masthead-meta">
+        <span><strong>הוכן ע״י:</strong> רועי צוקרמן, רע״ן חומ״ס באגף המבצעים</span>
+        <span><strong>קשר:</strong> <a href="mailto:roiez@102.gov.il">roiez@102.gov.il</a></span>
+        <span><strong>חלון:</strong> 19:00–03:00</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== CONTROLS ===== -->
+  <section class="controls anim anim-1">
+    <div class="control-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L4 6 V12 C 4 17, 8 21, 12 22 C 16 21, 20 17, 20 12 V6 L12 2 Z"/></svg>
+      בחירת מחוז
+    </div>
+    <div class="region-grid" id="regionGrid"></div>
+
+    <div class="control-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7 V12 L15 14"/></svg>
+      בחירת שעה
+    </div>
+    <div class="hour-track">
+      <div class="hour-pills" id="hourPills"></div>
+    </div>
+  </section>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero anim anim-2">
+    <div class="hero-band"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-headline">
+          <div class="hero-eyebrow" id="heroEyebrow">תחזית מבצעית</div>
+          <div class="hero-region display" id="heroRegion">—</div>
+          <div class="hero-time mono" id="heroTime">--:--</div>
+        </div>
+        <div class="verdict" id="verdict">—</div>
+      </div>
+      <div class="gauge-wrap">
+        <svg class="gauge" viewBox="0 0 200 115" id="gaugeSvg"></svg>
+        <div class="gauge-label">
+          <div class="gauge-score mono" id="gaugeScore">--</div>
+          <div class="gauge-tier" id="gaugeTier">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== METRIC CARDS ===== -->
+  <section class="metrics" id="metrics"></section>
+
+  <!-- ===== TREND ===== -->
+  <section class="trend-card anim anim-3">
+    <div class="trend-head">
+      <div class="trend-title display">מגמת סיכון לאורך הלילה</div>
+      <div class="trend-legend">
+        <span><span class="swatch" style="background: var(--risk-low)"></span>נמוך</span>
+        <span><span class="swatch" style="background: var(--risk-mid)"></span>בינוני</span>
+        <span><span class="swatch" style="background: var(--risk-high)"></span>גבוה</span>
+        <span><span class="swatch" style="background: var(--risk-extreme)"></span>קיצוני</span>
+      </div>
+    </div>
+    <svg class="chart" id="trendChart" viewBox="0 0 800 320" preserveAspectRatio="none"></svg>
+  </section>
+
+  <!-- ===== HEATMAP ===== -->
+  <section class="heatmap-card anim anim-4">
+    <div class="trend-head">
+      <div class="trend-title display">תמונת מצב — כל המחוזות</div>
+      <div class="trend-legend"><span style="font-size:0.75rem;color:var(--ink-muted)">לחיצה על תא = מעבר למחוז ושעה</span></div>
+    </div>
+    <div class="heat-grid" id="heatGrid"></div>
+  </section>
+
+  <!-- ===== COLOPHON ===== -->
+  <footer class="colophon">
+    <div class="ornament">· · ·</div>
+    <div>
+      <strong>כלי תומך החלטה</strong> — אינו מחליף תחזית מקצועית בזמן אמת.
+      הנתונים מבוססים על תחזית מטאורולוגית פנימית לליל ל״ג בעומר ואינם מחייבים.
+    </div>
+    <div style="margin-top:6px">
+      © כבאות והצלה לישראל · אגף המבצעים · רע״ן חומ״ס · רועי צוקרמן · roiez@102.gov.il
+    </div>
+  </footer>
+
+</div>
+
+<script>
+/* ===========================================================
+   DATA — מתוך מסמך התחזית (5 מחוזות × 9 שעות)
+   =========================================================== */
+const HOURS = ['19:00','20:00','21:00','22:00','23:00','00:00','01:00','02:00','03:00'];
+
+const REGIONS = [
+  {
+    id: 'north',
+    name: 'מחוז צפון',
+    sub: 'גליל עליון ותחתון, גולן',
+    iconKey: 'mountain',
+    notes: {
+      '19:00': 'רוח חזקה יחסית, הגשם בצפון צפוי למתן את התפשטות האש',
+      '20:00': 'החלשה במהירות הרוח'
+    },
+    rows: [
+      // [hour, dir, avgWind, gust, humidity, rain]
+      ['19:00','מערבית',          8, 15, 80, 80],
+      ['20:00','מערבית',          5, 12, 80, 70],
+      ['21:00','מערבית',          5, 12, 80, 60],
+      ['22:00','מערבית',          5, 12, 75, 50],
+      ['23:00','דרומית מערבית',   4, 10, 70, 40],
+      ['00:00','דרומית מערבית',   4, 10, 70, 40],
+      ['01:00','דרומית מערבית',   4, 10, 70, 40],
+      ['02:00','דרומית מערבית',   4, 10, 65, 40],
+      ['03:00','דרומית מערבית',   4, 10, 65, 40],
+    ]
+  },
+  {
+    id: 'coast',
+    name: 'מחוז חוף',
+    sub: 'כרמל, מישור חוף צפוני, צפון השרון',
+    iconKey: 'waves',
+    notes: {
+      '19:00': 'רוח חזקה יחסית, הגשם צפוי למתן את התפשטות האש',
+      '20:00': 'החלשה במהירות הרוח'
+    },
+    rows: [
+      ['19:00','מערבית',          8, 15, 70, 80],
+      ['20:00','מערבית',          7, 11, 65, 70],
+      ['21:00','מערבית',          7, 10, 65, 60],
+      ['22:00','מערבית',          7, 10, 65, 50],
+      ['23:00','דרומית מערבית',   6, 10, 65, 40],
+      ['00:00','דרומית מערבית',   5, 10, 65, 40],
+      ['01:00','דרומית מערבית',   5, 10, 60, 40],
+      ['02:00','דרומית מערבית',   5, 10, 60, 40],
+      ['03:00','דרומית מערבית',   5, 10, 60, 40],
+    ]
+  },
+  {
+    id: 'center',
+    name: 'מחוז מרכז ודן',
+    sub: 'מישור חוף מרכז, שפלה, שרון',
+    iconKey: 'building',
+    notes: {
+      '19:00': 'רוח חזקה יחסית, הגשם צפוי למתן את התפשטות האש',
+      '20:00': 'החלשה במהירות הרוח'
+    },
+    rows: [
+      ['19:00','מערבית',          6, 12, 70, 10],
+      ['20:00','מערבית',          5,  9, 65, 10],
+      ['21:00','מערבית',          4,  9, 65, 10],
+      ['22:00','מערבית',          4,  9, 65, 10],
+      ['23:00','דרומית מערבית',   4,  8, 65, 10],
+      ['00:00','דרומית מערבית',   4,  7, 65, 10],
+      ['01:00','דרומית מערבית',   3,  6, 60, 10],
+      ['02:00','דרומית מערבית',   3,  6, 60, 30],
+      ['03:00','דרומית מערבית',   3, 10, 60, 40],
+    ]
+  },
+  {
+    id: 'jerusalem',
+    name: 'מחוז י-ם ויו״ש',
+    sub: 'יהודה, שומרון וירושלים',
+    iconKey: 'walls',
+    notes: {
+      '19:00': 'רוח חזקה יחסית',
+      '20:00': 'הרוחות יחלשו אבל משבי הרוח יישארו חזקים יחסית לכל אורך הלילה. הגשם הצפוי (טפטופים) צפוי למתן במעט את התפשטות האש'
+    },
+    rows: [
+      ['19:00','מערבית',          7, 15, 70, 10],
+      ['20:00','מערבית',          6, 13, 65, 50],
+      ['21:00','מערבית',          5, 13, 65, 70],
+      ['22:00','מערבית',          5, 13, 65, 80],
+      ['23:00','דרומית מערבית',   5, 12, 65, 80],
+      ['00:00','דרומית מערבית',   5, 12, 65, 80],
+      ['01:00','דרומית מערבית',   5, 12, 60, 80],
+      ['02:00','דרומית מערבית',   5, 12, 60, 80],
+      ['03:00','דרומית מערבית',   5, 12, 60, 80],
+    ]
+  },
+  {
+    id: 'south',
+    name: 'מחוז דרום',
+    sub: 'מישור חוף דרומי',
+    iconKey: 'sun',
+    notes: {
+      '19:00': 'משבי רוח חזקים יחסית',
+      '20:00': 'החלשה במהירות הרוח'
+    },
+    rows: [
+      ['19:00','מערבית',          5, 12, 60, 10],
+      ['20:00','מערבית',          5,  8, 60, 10],
+      ['21:00','מערבית',          5,  7, 60, 10],
+      ['22:00','מערבית',          5,  7, 60, 10],
+      ['23:00','דרומית מערבית',   4,  7, 60, 10],
+      ['00:00','דרומית מערבית',   4,  7, 60, 10],
+      ['01:00','דרומית מערבית',   4,  6, 60, 10],
+      ['02:00','דרומית מערבית',   3,  6, 60, 10],
+      ['03:00','דרומית מערבית',   3,  6, 65, 30],
+    ]
+  }
+];
+
+/* ===========================================================
+   ICONS — מעוצבים, לא דקורטיביים
+   =========================================================== */
+const ICONS = {
+  mountain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 20 L9 8 L13 14 L17 6 L21 20 Z"/><circle cx="17" cy="6" r="0.5" fill="currentColor"/></svg>',
+  waves:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8 Q6 4 10 8 T18 8 T22 8"/><path d="M2 14 Q6 10 10 14 T18 14 T22 14"/><path d="M2 20 Q6 16 10 20 T18 20 T22 20"/></svg>',
+  building: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="8" width="6" height="13"/><rect x="11" y="3" width="9" height="18"/><line x1="14" y1="8" x2="14" y2="9"/><line x1="17" y1="8" x2="17" y2="9"/><line x1="14" y1="13" x2="14" y2="14"/><line x1="17" y1="13" x2="17" y2="14"/></svg>',
+  walls:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 21 V10 L6 10 V7 L9 7 V10 L12 10 V7 L15 7 V10 L18 10 V7 L21 7 V21 Z"/><line x1="3" y1="14" x2="21" y2="14"/></svg>',
+  sun:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="6.5" y2="6.5"/><line x1="17.5" y1="17.5" x2="19" y2="19"/><line x1="5" y1="19" x2="6.5" y2="17.5"/><line x1="17.5" y1="6.5" x2="19" y2="5"/></svg>',
+  wind:     '<svg viewBox="0 0 24 24" fill="none" stroke="#4F6240" stroke-width="2" stroke-linecap="round"><path d="M3 8 H14 A3 3 0 1 0 11 5"/><path d="M3 14 H18 A2.5 2.5 0 1 1 15.5 16.5"/><path d="M3 20 H10"/></svg>',
+  gust:     '<svg viewBox="0 0 24 24" fill="none" stroke="#C4502A" stroke-width="2" stroke-linecap="round"><path d="M3 6 H10 A2 2 0 1 0 8 4"/><path d="M3 12 H17 A3 3 0 1 1 14 15"/><path d="M3 18 H12 A2 2 0 1 0 10 20"/></svg>',
+  drop:     '<svg viewBox="0 0 24 24" fill="none" stroke="#4D6F7E" stroke-width="2" stroke-linejoin="round"><path d="M12 3 C 8 9, 5 12, 5 16 A 7 7 0 1 0 19 16 C 19 12, 16 9, 12 3 Z"/><path d="M9 16 A 3 3 0 0 0 12 19" stroke-width="1.5" opacity="0.6"/></svg>',
+  rain:     '<svg viewBox="0 0 24 24" fill="none" stroke="#4D6F7E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13 A 4 4 0 1 1 8 6 A 5 5 0 0 1 18 7 A 3.5 3.5 0 1 1 18 14"/><line x1="8" y1="18" x2="6" y2="22"/><line x1="13" y1="18" x2="11" y2="22"/><line x1="18" y1="18" x2="16" y2="22"/></svg>',
+  compass:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 6 L14 12 L12 18 L10 12 Z" fill="currentColor"/></svg>',
+  flame:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 C 14 7, 18 9, 18 14 A 6 6 0 1 1 6 14 C 6 11, 9 9, 9 6 C 11 8, 12 7, 12 3 Z"/></svg>',
+};
+
+/* ===========================================================
+   STATE
+   =========================================================== */
+let state = {
+  regionId: 'jerusalem',
+  hour: '19:00'
+};
+
+/* ===========================================================
+   RISK ENGINE
+   =========================================================== */
+function computeRisk(avg, gust, humidity, rain) {
+  // Weighted: each component contributes to "raw fire-spread potential",
+  // then rain probability mitigates.
+  const windScore     = Math.min(avg * 4,         32); // 0..32
+  const gustScore     = Math.min(gust * 2.5,      37.5); // 0..37.5
+  const humidityScore = Math.max(0, (100-humidity) * 0.5); // dryer = higher
+  const raw = windScore + gustScore + humidityScore;
+  const mitigation = rain * 0.4; // rain reduces
+  const score = Math.max(0, Math.min(100, (raw - mitigation) / 120 * 100 * 1.4));
+  return Math.round(score);
+}
+
+function tier(score) {
+  if (score < 30) return 'low';
+  if (score < 50) return 'mid';
+  if (score < 70) return 'high';
+  return 'extreme';
+}
+function tierLabel(t) {
+  return ({low:'סיכון נמוך', mid:'סיכון בינוני', high:'סיכון גבוה', extreme:'סיכון קיצוני'})[t];
+}
+function tierColor(t) {
+  return ({
+    low:    'var(--risk-low)',
+    mid:    'var(--risk-mid)',
+    high:   'var(--risk-high)',
+    extreme:'var(--risk-extreme)'
+  })[t];
+}
+function tierColorRaw(t) {
+  return ({
+    low:    '#5C9B6A',
+    mid:    '#E6A53A',
+    high:   'rgb(216,99,44)',
+    extreme:'#A82A22'
+  })[t];
+}
+function tierBg(t) {
+  return ({
+    low:    '#DEEBDD',
+    mid:    '#F8EBC8',
+    high:   '#F8D9C2',
+    extreme:'#F1C8C2'
+  })[t];
+}
+
+/* ===========================================================
+   METRIC INTERPRETATION
+   =========================================================== */
+function windMeaning(avg) {
+  if (avg < 2)  return ['low',  'כמעט אין השפעה על התפשטות האש'];
+  if (avg < 4)  return ['mid',  'התפשטות מתונה — שליטה אפשרית'];
+  if (avg < 6)  return ['high', 'התפשטות מהירה, גיצים מועפים'];
+  if (avg < 8)  return ['high', 'התפשטות מהירה מאוד, סיכון להתלקחויות שניוניות'];
+  return            ['extr', 'התפשטות קיצונית — סכנה ממשית להתפרצויות חדשות'];
+}
+function gustMeaning(g) {
+  if (g < 8)   return ['low',  'משבים רגילים, השפעה מינימלית'];
+  if (g < 12)  return ['mid',  'משבים מורגשים — גיצים נישאים עד עשרות מטרים'];
+  if (g < 15)  return ['high', 'משבים חזקים — גיצים נישאים מאות מטרים, סיכון להתלקחויות שניוניות'];
+  return            ['extr', 'משבים קיצוניים — סכנה לפיזור גיצים נרחב'];
+}
+function humidityMeaning(h) {
+  if (h < 30)  return ['extr', 'דלק יבש מאוד — בעירה מהירה ועוצמתית'];
+  if (h < 50)  return ['high', 'תנאים מעודדי בערה'];
+  if (h < 70)  return ['mid',  'לחות בינונית — מיתון חלקי'];
+  return            ['low',  'דלק לח — התפשטות איטית'];
+}
+function rainMeaning(r) {
+  if (r < 20)  return ['extr', 'ללא השפעה ממתנת'];
+  if (r < 50)  return ['mid',  'מיתון חלקי — להיערך לתרחיש יבש'];
+  if (r < 80)  return ['low',  'מיתון משמעותי — אך לא תחליף לכוננות'];
+  return            ['low',  'סיכוי גבוה לכיבוי טבעי חלקי — אין להסתמך'];
+}
+function dirSpread(dir) {
+  // Wind FROM direction → fire spreads OPPOSITE
+  // מערבית = wind from west → fire spreads east
+  // דרומית מערבית = wind from SW → fire spreads NE
+  if (dir === 'מערבית')        return { from: 'מערב',     to: 'מזרח',     deg: 270 };
+  if (dir === 'דרומית מערבית') return { from: 'דרום־מערב', to: 'צפון־מזרח', deg: 225 };
+  return { from: dir, to: '—', deg: 0 };
+}
+
+/* ===========================================================
+   AGGREGATED VERDICT
+   =========================================================== */
+function buildVerdict(reg, row, score, t) {
+  const [hour, dir, avg, gust, hum, rain] = row;
+  const ds = dirSpread(dir);
+  const parts = [];
+
+  // Headline by tier
+  const heads = {
+    low:    `<strong>תנאי התפשטות מתונים.</strong>`,
+    mid:    `<strong>תנאים מאתגרים — מומלצת ערנות.</strong>`,
+    high:   `<strong>סיכון גבוה — היערכות מוגברת נדרשת.</strong>`,
+    extreme:`<strong>סיכון קיצוני — שיקול הצבת כוחות מקדימים.</strong>`
+  };
+  parts.push(heads[t]);
+
+  // Spread direction
+  parts.push(`רוח ${dir} — האש תתפשט מ${ds.from} ל${ds.to}.`);
+
+  // Gust risk
+  if (gust >= 15) parts.push('משבים ≥15 מ׳/ש׳ — התראת התלקחויות שניוניות עד מאות מטרים מהמדורה.');
+  else if (gust >= 12) parts.push('משבים חזקים — להגדיל מרחקי בידוד מסביב למוקדי בעירה.');
+
+  // Rain mitigation
+  if (rain >= 70) parts.push('סיכוי גשם גבוה צפוי לסייע במיתון התפשטות.');
+  else if (rain < 20) parts.push('ללא מיתון אטמוספרי — דלק יבש לאורך הלילה.');
+
+  // Region-specific note
+  if (reg.notes[hour]) parts.push(`<em>הערה אזורית:</em> ${reg.notes[hour]}.`);
+
+  return parts.join(' ');
+}
+
+/* ===========================================================
+   RENDER — REGION PILLS
+   =========================================================== */
+function renderRegions() {
+  const grid = document.getElementById('regionGrid');
+  grid.innerHTML = REGIONS.map(r => `
+    <button class="region-pill ${r.id===state.regionId?'active':''}" data-region="${r.id}">
+      <div class="icon">${ICONS[r.iconKey]}</div>
+      <div class="pill-text">
+        <span>${r.name}</span>
+        <span class="pill-sub">${r.sub}</span>
+      </div>
+    </button>
+  `).join('');
+  grid.querySelectorAll('.region-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.regionId = btn.dataset.region;
+      renderAll();
+    });
+  });
+}
+
+/* ===========================================================
+   RENDER — HOUR PILLS
+   =========================================================== */
+function renderHours() {
+  const reg = currentRegion();
+  const wrap = document.getElementById('hourPills');
+  wrap.innerHTML = HOURS.map((h, i) => {
+    const row = reg.rows.find(r => r[0]===h);
+    const score = computeRisk(row[2], row[3], row[4], row[5]);
+    const t = tier(score);
+    let tag = '';
+    if (i === 0) tag = 'תחילת מדורות';
+    if (i === HOURS.length-1) tag = 'סיום מדורות';
+    return `
+      <button class="hour-pill ${h===state.hour?'active':''} ${tag?'endpoint':''}" data-hour="${h}" ${tag?`data-tag="${tag}"`:''}>
+        <span>${h}</span>
+        <span class="risk-dot" style="background:${tierColorRaw(t)}"></span>
+      </button>
+    `;
+  }).join('');
+  wrap.querySelectorAll('.hour-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.hour = btn.dataset.hour;
+      renderAll();
+    });
+  });
+}
+
+/* ===========================================================
+   RENDER — HERO
+   =========================================================== */
+function renderHero() {
+  const reg = currentRegion();
+  const row = currentRow();
+  const score = computeRisk(row[2], row[3], row[4], row[5]);
+  const t = tier(score);
+
+  document.getElementById('heroEyebrow').textContent =
+    `${reg.sub}`;
+  document.getElementById('heroRegion').textContent = reg.name;
+  document.getElementById('heroTime').innerHTML =
+    `${row[0]}<span class="ampm">שעה</span>`;
+
+  const verdict = document.getElementById('verdict');
+  verdict.className = 'verdict tier-' + t;
+  verdict.innerHTML = buildVerdict(reg, row, score, t);
+
+  // Gauge
+  drawGauge(score, t);
+  document.getElementById('gaugeScore').textContent = score;
+  const tierEl = document.getElementById('gaugeTier');
+  tierEl.textContent = tierLabel(t);
+  tierEl.className = 'gauge-tier tier-' + t;
+}
+
+function drawGauge(score, t) {
+  const svg = document.getElementById('gaugeSvg');
+  const cx = 100, cy = 100, r = 80, sw = 16;
+  // semi-circle from 180° to 0°
+  const stops = [
+    { from: 180, to: 145, color: '#5C9B6A' },
+    { from: 145, to: 110, color: '#E6A53A' },
+    { from: 110, to:  70, color: '#D8632C' },
+    { from:  70, to:   0, color: '#A82A22' },
+  ];
+  function polar(angle, radius) {
+    const rad = (angle) * Math.PI / 180;
+    return [cx + Math.cos(rad) * radius, cy - Math.sin(rad) * radius];
+  }
+  function arc(a1, a2, radius) {
+    const [x1,y1] = polar(a1, radius);
+    const [x2,y2] = polar(a2, radius);
+    const large = Math.abs(a1-a2) > 180 ? 1 : 0;
+    const sweep = a1 > a2 ? 1 : 0;
+    return `M ${x1} ${y1} A ${radius} ${radius} 0 ${large} ${sweep} ${x2} ${y2}`;
+  }
+  let html = '';
+  // Background arcs (segments)
+  for (const s of stops) {
+    html += `<path d="${arc(s.from, s.to, r)}" stroke="${s.color}" stroke-width="${sw}" fill="none" stroke-linecap="butt" opacity="0.25"/>`;
+  }
+  // Active fill: from 180 to (180 - score*1.8)
+  const targetAngle = 180 - score * 1.8;
+  // Build a multi-color active arc by drawing only segments up to target
+  let lastAngle = 180;
+  for (const s of stops) {
+    const segEnd = Math.max(s.to, targetAngle);
+    if (lastAngle <= targetAngle) break;
+    if (segEnd >= s.from) continue;
+    html += `<path d="${arc(s.from, segEnd, r)}" stroke="${s.color}" stroke-width="${sw}" fill="none" stroke-linecap="butt"/>`;
+    lastAngle = segEnd;
+    if (segEnd <= targetAngle) break;
+  }
+  // Tick marks at 25/50/75
+  for (const v of [25,50,75]) {
+    const a = 180 - v*1.8;
+    const [x1,y1] = polar(a, r-sw/2-2);
+    const [x2,y2] = polar(a, r+sw/2+2);
+    html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#FAF5E8" stroke-width="2"/>`;
+  }
+  // Pointer
+  const [px, py] = polar(targetAngle, r - 4);
+  const tColor = tierColorRaw(t);
+  html += `<circle cx="${cx}" cy="${cy}" r="6" fill="${tColor}"/>`;
+  html += `<line x1="${cx}" y1="${cy}" x2="${px}" y2="${py}" stroke="${tColor}" stroke-width="3" stroke-linecap="round"/>`;
+  html += `<circle cx="${px}" cy="${py}" r="5" fill="${tColor}" stroke="#FFFDF5" stroke-width="2"/>`;
+
+  // Labels
+  html += `<text x="20" y="110" font-size="9" fill="#8C8F98" font-family="JetBrains Mono">0</text>`;
+  html += `<text x="178" y="110" font-size="9" fill="#8C8F98" font-family="JetBrains Mono">100</text>`;
+  svg.innerHTML = html;
+}
+
+/* ===========================================================
+   RENDER — METRICS
+   =========================================================== */
+function renderMetrics() {
+  const row = currentRow();
+  const [, dir, avg, gust, hum, rain] = row;
+  const ds = dirSpread(dir);
+  const wm = windMeaning(avg);
+  const gm = gustMeaning(gust);
+  const hm = humidityMeaning(hum);
+  const rm = rainMeaning(rain);
+
+  const wrap = document.getElementById('metrics');
+  wrap.innerHTML = `
+    <!-- WIND DIRECTION -->
+    <div class="metric compass-card anim anim-1">
+      <div class="metric-head">
+        <div class="micon">${ICONS.compass}</div>
+        <div class="mname">כיוון רוח · התפשטות אש</div>
+      </div>
+      <svg class="compass-vis" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="42" fill="none" stroke="#D9D2BD" stroke-width="1"/>
+        <circle cx="50" cy="50" r="34" fill="none" stroke="#D9D2BD" stroke-width="0.5" stroke-dasharray="2 3"/>
+        <text x="50" y="13" text-anchor="middle" font-size="9" fill="#8C8F98" font-family="Assistant" font-weight="700">צ</text>
+        <text x="50" y="93" text-anchor="middle" font-size="9" fill="#8C8F98" font-family="Assistant" font-weight="700">ד</text>
+        <text x="11" y="53" text-anchor="middle" font-size="9" fill="#8C8F98" font-family="Assistant" font-weight="700">מ</text>
+        <text x="89" y="53" text-anchor="middle" font-size="9" fill="#8C8F98" font-family="Assistant" font-weight="700">מז</text>
+        <!-- Wind FROM direction (gray dashed inward) -->
+        ${(() => {
+          const a = (ds.deg - 90) * Math.PI/180;
+          const x1 = 50 + Math.cos(a) * 38, y1 = 50 + Math.sin(a) * 38;
+          const x2 = 50 + Math.cos(a) * 12, y2 = 50 + Math.sin(a) * 12;
+          return `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#8C8F98" stroke-width="1" stroke-dasharray="3 2"/>`;
+        })()}
+        <!-- Fire spread direction (ember orange, with arrowhead, outward) -->
+        ${(() => {
+          const a = (ds.deg + 90) * Math.PI/180; // opposite direction
+          const x1 = 50, y1 = 50;
+          const x2 = 50 + Math.cos(a) * 38, y2 = 50 + Math.sin(a) * 38;
+          // arrow head
+          const ah1x = x2 - Math.cos(a) * 6 + Math.cos(a + Math.PI/2) * 4;
+          const ah1y = y2 - Math.sin(a) * 6 + Math.sin(a + Math.PI/2) * 4;
+          const ah2x = x2 - Math.cos(a) * 6 - Math.cos(a + Math.PI/2) * 4;
+          const ah2y = y2 - Math.sin(a) * 6 - Math.sin(a + Math.PI/2) * 4;
+          return `<line x1="${x1}" y1="${y1}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#C4502A" stroke-width="2.5" stroke-linecap="round"/>
+                  <polygon points="${x2.toFixed(2)},${y2.toFixed(2)} ${ah1x.toFixed(2)},${ah1y.toFixed(2)} ${ah2x.toFixed(2)},${ah2y.toFixed(2)}" fill="#C4502A"/>`;
+        })()}
+        <circle cx="50" cy="50" r="2" fill="#1F2128"/>
+      </svg>
+      <div style="text-align:center;font-size:0.85rem;color:var(--ink-soft);">
+        רוח ${dir}
+      </div>
+      <div class="metric-meaning" style="text-align:center;">
+        <strong>האש מתפשטת ל${ds.to}</strong>
+        <br>
+        <span style="font-size:0.78rem;color:var(--ink-muted)">בחנו מטרות בכיוון זה מהמדורה</span>
+      </div>
+    </div>
+
+    <!-- AVG WIND -->
+    <div class="metric anim anim-2">
+      <div class="metric-head">
+        <div class="micon">${ICONS.wind}</div>
+        <div class="mname">מהירות רוח ממוצעת</div>
+      </div>
+      <div class="metric-value">${avg}<span class="unit"> מ׳/ש׳</span></div>
+      <div class="bar"><div class="bar-fill" style="width:${Math.min(avg/10*100,100)}%;background:${tierColorRaw(wm[0]==='extr'?'extreme':wm[0])}"></div></div>
+      <div class="metric-meaning">
+        <span class="tag tag-${wm[0]}">${({low:'נמוך',mid:'בינוני',high:'גבוה',extr:'קיצוני'})[wm[0]]}</span>
+        ${wm[1]}
+      </div>
+    </div>
+
+    <!-- GUSTS -->
+    <div class="metric anim anim-3">
+      <div class="metric-head">
+        <div class="micon">${ICONS.gust}</div>
+        <div class="mname">משבי רוח</div>
+      </div>
+      <div class="metric-value">${gust}<span class="unit"> מ׳/ש׳</span></div>
+      <div class="bar"><div class="bar-fill" style="width:${Math.min(gust/20*100,100)}%;background:${tierColorRaw(gm[0]==='extr'?'extreme':gm[0])}"></div></div>
+      <div class="metric-meaning">
+        <span class="tag tag-${gm[0]}">${({low:'נמוך',mid:'בינוני',high:'גבוה',extr:'קיצוני'})[gm[0]]}</span>
+        ${gm[1]}
+      </div>
+    </div>
+
+    <!-- HUMIDITY -->
+    <div class="metric anim anim-4">
+      <div class="metric-head">
+        <div class="micon">${ICONS.drop}</div>
+        <div class="mname">לחות יחסית</div>
+      </div>
+      <div class="metric-value">${hum}<span class="unit"> %</span></div>
+      <div class="bar"><div class="bar-fill" style="width:${hum}%;background:#4D6F7E"></div></div>
+      <div class="metric-meaning">
+        <span class="tag tag-${hm[0]}">${({low:'נמוך',mid:'בינוני',high:'גבוה',extr:'קיצוני'})[hm[0]]}</span>
+        ${hm[1]}
+      </div>
+    </div>
+
+    <!-- RAIN -->
+    <div class="metric anim anim-4">
+      <div class="metric-head">
+        <div class="micon">${ICONS.rain}</div>
+        <div class="mname">סיכוי לגשם</div>
+      </div>
+      <div class="metric-value">${rain}<span class="unit"> %</span></div>
+      <div class="bar"><div class="bar-fill" style="width:${rain}%;background:#94B3C2"></div></div>
+      <div class="metric-meaning">
+        <span class="tag tag-${rm[0]}">${({low:'נמוך',mid:'בינוני',high:'גבוה',extr:'קיצוני'})[rm[0]]}</span>
+        ${rm[1]}
+      </div>
+    </div>
+  `;
+}
+
+/* ===========================================================
+   RENDER — TREND CHART
+   =========================================================== */
+function renderTrend() {
+  const reg = currentRegion();
+  const svg = document.getElementById('trendChart');
+  const W = 800, H = 320;
+  const padL = 50, padR = 30, padT = 30, padB = 50;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
+
+  const scores = reg.rows.map(r => computeRisk(r[2], r[3], r[4], r[5]));
+  const xStep = innerW / (HOURS.length - 1);
+  const yScale = v => padT + (1 - v/100) * innerH;
+
+  let html = '';
+  // Risk zone backgrounds
+  const zones = [
+    { from: 0, to: 30, color: '#DEEBDD' },
+    { from: 30, to: 50, color: '#F8EBC8' },
+    { from: 50, to: 70, color: '#F8D9C2' },
+    { from: 70, to: 100, color: '#F1C8C2' },
+  ];
+  zones.forEach(z => {
+    const y1 = yScale(z.to);
+    const y2 = yScale(z.from);
+    html += `<rect x="${padL}" y="${y1}" width="${innerW}" height="${y2-y1}" fill="${z.color}" opacity="0.55"/>`;
+  });
+
+  // Grid lines
+  [0,25,50,75,100].forEach(v => {
+    const y = yScale(v);
+    html += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#1F2128" stroke-width="0.5" opacity="0.08"/>`;
+    html += `<text x="${padL-8}" y="${y+4}" text-anchor="end" font-size="11" fill="#8C8F98" font-family="JetBrains Mono">${v}</text>`;
+  });
+
+  // X labels
+  HOURS.forEach((h, i) => {
+    const x = padL + i*xStep;
+    html += `<text x="${x}" y="${H-padB+18}" text-anchor="middle" font-size="11" fill="#4B4F5A" font-family="JetBrains Mono" font-weight="700">${h}</text>`;
+    html += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}" stroke="#1F2128" stroke-width="0.3" opacity="0.06"/>`;
+  });
+
+  // Area fill
+  let areaPath = `M ${padL} ${H-padB} `;
+  scores.forEach((s, i) => {
+    const x = padL + i*xStep;
+    const y = yScale(s);
+    areaPath += `L ${x} ${y} `;
+  });
+  areaPath += `L ${padL + (scores.length-1)*xStep} ${H-padB} Z`;
+  html += `<path d="${areaPath}" fill="#C4502A" opacity="0.12"/>`;
+
+  // Line
+  let linePath = '';
+  scores.forEach((s, i) => {
+    const x = padL + i*xStep;
+    const y = yScale(s);
+    linePath += (i===0?'M':'L') + ` ${x} ${y} `;
+  });
+  html += `<path d="${linePath}" fill="none" stroke="#C4502A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+  // Points (color by tier; highlight current hour)
+  scores.forEach((s, i) => {
+    const x = padL + i*xStep;
+    const y = yScale(s);
+    const t = tier(s);
+    const isActive = HOURS[i] === state.hour;
+    if (isActive) {
+      html += `<circle cx="${x}" cy="${y}" r="14" fill="${tierColorRaw(t)}" opacity="0.18"/>`;
+      html += `<circle cx="${x}" cy="${y}" r="8" fill="${tierColorRaw(t)}" opacity="0.32" class="pulse-dot"/>`;
+    }
+    html += `<circle cx="${x}" cy="${y}" r="${isActive?5.5:4.5}" fill="${tierColorRaw(t)}" stroke="#FFFDF5" stroke-width="2"/>`;
+    if (isActive) {
+      html += `<text x="${x}" y="${y-14}" text-anchor="middle" font-size="13" font-weight="700" fill="${tierColorRaw(t)}" font-family="JetBrains Mono">${s}</text>`;
+    }
+  });
+
+  // Y-axis label
+  html += `<text x="${padL-30}" y="${padT-6}" font-size="10" fill="#8C8F98" font-family="Assistant" font-weight="600">ציון סיכון</text>`;
+
+  svg.innerHTML = html;
+}
+
+/* ===========================================================
+   RENDER — HEATMAP
+   =========================================================== */
+function renderHeatmap() {
+  const grid = document.getElementById('heatGrid');
+  let html = `<div class="cell col-label"></div>`;
+  HOURS.forEach(h => {
+    html += `<div class="cell col-label">${h}</div>`;
+  });
+  REGIONS.forEach(reg => {
+    html += `<div class="cell row-label ${reg.id===state.regionId?'active':''}" data-region="${reg.id}">${reg.name}</div>`;
+    HOURS.forEach(h => {
+      const row = reg.rows.find(r => r[0]===h);
+      const score = computeRisk(row[2], row[3], row[4], row[5]);
+      const t = tier(score);
+      const active = (reg.id===state.regionId && h===state.hour) ? 'active' : '';
+      html += `<div class="cell heat-cell ${active}" data-region="${reg.id}" data-hour="${h}" style="background:${tierBg(t)};color:${tierColorRaw(t)}">${score}</div>`;
+    });
+  });
+  grid.innerHTML = html;
+  grid.querySelectorAll('[data-region][data-hour]').forEach(c => {
+    c.addEventListener('click', () => {
+      state.regionId = c.dataset.region;
+      state.hour = c.dataset.hour;
+      renderAll();
+    });
+  });
+  grid.querySelectorAll('.row-label').forEach(c => {
+    c.addEventListener('click', () => {
+      state.regionId = c.dataset.region;
+      renderAll();
+    });
+  });
+}
+
+/* ===========================================================
+   HELPERS + ORCHESTRATION
+   =========================================================== */
+function currentRegion() { return REGIONS.find(r => r.id === state.regionId); }
+function currentRow() { return currentRegion().rows.find(r => r[0] === state.hour); }
+
+function renderAll() {
+  renderRegions();
+  renderHours();
+  renderHero();
+  renderMetrics();
+  renderTrend();
+  renderHeatmap();
+  // smooth scroll to hero on mobile selection
+  // (kept off intentionally — keeps user context)
+}
+
+renderAll();
+</script>
+</body>
+</html>
