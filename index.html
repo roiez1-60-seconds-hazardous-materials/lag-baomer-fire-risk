@@ -628,6 +628,10 @@
   }
   .pulse-dot { animation: pulse 1.6s ease-in-out infinite; }
 
+  /* Default (desktop): full region labels — short labels hidden */
+  .lbl-full { display: inline; }
+  .lbl-short { display: none; }
+
   /* ===== MOBILE: prevent overflow ===== */
   @media (max-width: 640px) {
     /* Hour pills wrap to 3x3 grid — all 9 hours visible without scrolling */
@@ -643,24 +647,41 @@
     .hour-pill.endpoint::before { display: none; }
     .hour-track { padding-bottom: 14px; }
 
-    /* Heatmap: compact cells, all 9 hours fit on screen */
+    /* Heatmap: tight cells with minmax(0,1fr) so columns can shrink below content */
+    .heatmap-card {
+      padding: 14px 10px;
+      overflow-x: hidden;
+    }
     .heat-grid {
-      grid-template-columns: 78px repeat(9, 1fr);
+      grid-template-columns: 56px repeat(9, minmax(0, 1fr));
       gap: 2px;
+      min-width: 0 !important;
+      width: 100%;
+    }
+    .heat-grid .cell {
+      padding: 6px 0;
+      font-size: 0.65rem;
+      overflow: hidden;
       min-width: 0;
     }
-    .heatmap-card { overflow-x: visible; }
-    .heat-grid .cell { padding: 7px 1px; font-size: 0.72rem; }
     .heat-grid .row-label {
-      padding: 7px 4px;
-      font-size: 0.72rem;
+      padding: 6px 2px;
+      font-size: 0.66rem;
       line-height: 1.15;
+      white-space: nowrap;
     }
     .heat-grid .col-label {
-      font-size: 0.58rem;
-      padding: 4px 1px !important;
+      font-size: 0.55rem;
+      padding: 3px 0 !important;
+      letter-spacing: -0.04em;
     }
-    .heat-cell { font-size: 0.7rem; }
+    .heat-cell {
+      font-size: 0.66rem;
+      min-width: 0;
+    }
+    /* Mobile: short region labels */
+    .lbl-full { display: none; }
+    .lbl-short { display: inline; }
   }
 </style>
 </head>
@@ -1411,7 +1432,7 @@ function renderHeatmap() {
     html += `<div class="cell col-label">${h}</div>`;
   });
   REGIONS.forEach(reg => {
-    html += `<div class="cell row-label ${reg.id===state.regionId?'active':''}" data-region="${reg.id}">${reg.name}</div>`;
+    html += `<div class="cell row-label ${reg.id===state.regionId?'active':''}" data-region="${reg.id}"><span class="lbl-full">${reg.name}</span><span class="lbl-short">${reg.name.replace(/^מחוז /, '').replace('י-ם ויו״ש', 'י-ם')}</span></div>`;
     HOURS.forEach(h => {
       const row = reg.rows.find(r => r[0]===h);
       const score = computeRisk(row[2], row[3], row[4], row[5]);
