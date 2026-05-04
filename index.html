@@ -627,6 +627,41 @@
     50% { opacity: 1; }
   }
   .pulse-dot { animation: pulse 1.6s ease-in-out infinite; }
+
+  /* ===== MOBILE: prevent overflow ===== */
+  @media (max-width: 640px) {
+    /* Hour pills wrap to 3x3 grid — all 9 hours visible without scrolling */
+    .hour-pills {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .hour-pill {
+      padding: 10px 4px;
+      font-size: 0.85rem;
+    }
+    /* Hide endpoint tags on mobile — position implies start/end */
+    .hour-pill.endpoint::before { display: none; }
+    .hour-track { padding-bottom: 14px; }
+
+    /* Heatmap: compact cells, all 9 hours fit on screen */
+    .heat-grid {
+      grid-template-columns: 78px repeat(9, 1fr);
+      gap: 2px;
+      min-width: 0;
+    }
+    .heatmap-card { overflow-x: visible; }
+    .heat-grid .cell { padding: 7px 1px; font-size: 0.72rem; }
+    .heat-grid .row-label {
+      padding: 7px 4px;
+      font-size: 0.72rem;
+      line-height: 1.15;
+    }
+    .heat-grid .col-label {
+      font-size: 0.58rem;
+      padding: 4px 1px !important;
+    }
+    .heat-cell { font-size: 0.7rem; }
+  }
 </style>
 </head>
 <body>
